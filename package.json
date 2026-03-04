@@ -1,0 +1,30 @@
+{
+  "name": "agu-crm",
+  "version": "1.0.0",
+  "description": "AGU CRM - O'zbekiston va O'rta Osiyo bozori uchun Bitrix24 ga o'xshash CRM tizimi",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend",
+    "telegram-bot"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\" \"npm run dev:bot\"",
+    "dev:backend": "npm run dev --workspace=backend",
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "dev:bot": "npm run dev --workspace=telegram-bot",
+    "build": "npm run build --workspaces",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "migrate": "npm run migrate --workspace=backend",
+    "seed": "npm run seed --workspace=backend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
