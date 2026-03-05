@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Filter, UserPlus, Clock, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
 import api from '../../api/axios';
 import toast from 'react-hot-toast';
+import LeadScoreBadge from '../../components/ai/LeadScoreBadge';
 
 const STATUS_CONFIG = {
   new:        { label: 'Yangi', color: 'badge-blue', icon: UserPlus },
@@ -55,9 +56,20 @@ export default function LeadsPage() {
           <h1 className="text-2xl font-bold text-gray-900">Leadlar</h1>
           <p className="text-gray-500 text-sm mt-1">{data?.meta?.total || 0} ta lead</p>
         </div>
-        <button onClick={() => setShowCreate(true)} className="btn-primary">
-          <Plus size={16} /> Yangi lead
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => {
+              api.post('/ai/leads/batch-score').then(() => toast.success('AI baholash boshlandi'));
+            }}
+            className="btn-secondary text-sm"
+            title="Barcha yangi leadlarni AI bilan baholash"
+          >
+            ✨ Barchani baholash
+          </button>
+          <button onClick={() => setShowCreate(true)} className="btn-primary">
+            <Plus size={16} /> Yangi lead
+          </button>
+        </div>
       </div>
 
       {/* Filter */}
@@ -90,6 +102,7 @@ export default function LeadsPage() {
           <thead>
             <tr className="bg-gray-50 border-b border-gray-100">
               <th className="text-left py-3 px-4 font-medium text-gray-600">Sarlavha</th>
+              <th className="text-left py-3 px-4 font-medium text-gray-600">AI Ball</th>
               <th className="text-left py-3 px-4 font-medium text-gray-600">Manba</th>
               <th className="text-left py-3 px-4 font-medium text-gray-600">Status</th>
               <th className="text-left py-3 px-4 font-medium text-gray-600">Operator</th>
@@ -111,6 +124,12 @@ export default function LeadsPage() {
                       <p className="font-medium text-gray-900">{lead.title}</p>
                       {lead.contact_name && <p className="text-xs text-gray-400">{lead.contact_name}</p>}
                     </div>
+                  </td>
+                  <td className="py-3 px-4">
+                    <LeadScoreBadge
+                      leadId={lead.id}
+                      existingScore={lead.custom_fields?.ai_score}
+                    />
                   </td>
                   <td className="py-3 px-4">
                     <span className="text-lg" title={lead.source}>{SOURCE_ICONS[lead.source] || '❓'}</span>

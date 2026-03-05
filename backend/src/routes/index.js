@@ -15,6 +15,7 @@ const analyticsRoutes = require('../modules/analytics/analytics.routes');
 const integrationRoutes = require('../modules/integrations/integration.routes');
 const notificationRoutes = require('../modules/notifications/notification.routes');
 const organizationRoutes = require('../modules/organizations/organization.routes');
+const aiRoutes = require('../modules/ai/ai.routes');
 
 // Auth (token kerak emas)
 router.use('/auth', authRoutes);
@@ -33,5 +34,6 @@ router.use('/conversations', conversationRoutes);
 router.use('/analytics', analyticsRoutes);
 router.use('/integrations', integrationRoutes);
 router.use('/notifications', notificationRoutes);
+router.use('/ai', aiRoutes);
 
 module.exports = router;

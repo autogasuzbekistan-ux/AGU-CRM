@@ -4,6 +4,7 @@ import { Plus, DollarSign } from 'lucide-react';
 import api from '../../api/axios';
 import { formatUZS } from '../../utils/format';
 import toast from 'react-hot-toast';
+import WinProbabilityWidget from '../../components/ai/WinProbabilityWidget';
 
 export default function DealsPage() {
   const [pipelineId, setPipelineId] = useState(null);
@@ -96,6 +97,11 @@ export default function DealsPage() {
 
                   {deal.contact_name && (
                     <p className="text-xs text-gray-500 mb-2">👤 {deal.contact_name}</p>
+                  )}
+
+                  {/* AI Win Probability */}
+                  {!stage.is_won && !stage.is_lost && (
+                    <WinProbabilityWidget dealId={deal.id} compact />
                   )}
 
                   <div className="flex items-center justify-between mt-3">

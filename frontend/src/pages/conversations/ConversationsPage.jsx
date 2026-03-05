@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Send, Search, CheckCheck, Filter } from 'lucide-react';
+import { Send, Search, CheckCheck, Sparkles, BookOpen } from 'lucide-react';
 import api from '../../api/axios';
+import SmartReplyPanel from '../../components/ai/SmartReplyPanel';
+import SentimentBadge from '../../components/ai/SentimentBadge';
+import ConversationSummaryModal from '../../components/ai/ConversationSummaryModal';
 
 const CHANNEL_ICONS = { telegram: '✈️', whatsapp: '📱', instagram: '📸', facebook: '👥', email: '📧' };
 const CHANNEL_COLORS = {
@@ -13,6 +16,7 @@ export default function ConversationsPage() {
   const [selected, setSelected] = useState(null);
   const [message, setMessage] = useState('');
   const [filter, setFilter] = useState({ channel: '', status: 'open' });
+  const [showSummary, setShowSummary] = useState(false);
   const qc = useQueryClient();
 
   const { data } = useQuery({
@@ -138,7 +142,15 @@ export default function ConversationsPage() {
                 <p className="text-xs text-gray-400">{CHANNEL_ICONS[selected.channel]} {selected.channel}</p>
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
+              <SentimentBadge conversationId={selected.id} />
+              <button
+                onClick={() => setShowSummary(true)}
+                className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100"
+                title="AI xulosa"
+              >
+                <BookOpen size={13} /> Xulosa
+              </button>
               {selected.status === 'open' && (
                 <button
                   onClick={() => resolveMutation.mutate(selected.id)}
@@ -168,6 +180,12 @@ export default function ConversationsPage() {
             ))}
           </div>
 
+          {/* AI Smart Reply */}
+          <SmartReplyPanel
+            conversationId={selected.id}
+            onSelect={(text) => setMessage(text)}
+          />
+
           {/* Input */}
           <div className="bg-white border-t border-gray-100 p-4">
             <div className="flex gap-3">
@@ -196,6 +214,14 @@ export default function ConversationsPage() {
             <p className="text-sm mt-1">Chap tomondagi ro'yxatdan suhbat tanlang</p>
           </div>
         </div>
+      )}
+
+      {/* Summary Modal */}
+      {showSummary && selected && (
+        <ConversationSummaryModal
+          conversationId={selected.id}
+          onClose={() => setShowSummary(false)}
+        />
       )}
     </div>
   );
