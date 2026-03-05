@@ -1,4 +1,5 @@
 const db = require('../../database/connection');
+const { runAutomations } = require('../automation/automation.engine');
 
 exports.list = async (req, res, next) => {
   try {
@@ -87,6 +88,13 @@ exports.create = async (req, res, next) => {
       io.to(`user:${operatorId}`).emit('new_lead', { lead });
     }
 
+    // Automation trigger
+    runAutomations(req.organizationId, 'lead_created', {
+      entity_type: 'lead', entity_id: lead.id,
+      lead_id: lead.id, contact_id: lead.contact_id,
+      assigned_to: operatorId, source: lead.source, priority: lead.priority,
+    }).catch(() => {});
+
     res.status(201).json({ success: true, data: lead });
   } catch (error) {
     next(error);
@@ -133,10 +141,20 @@ exports.updateStatus = async (req, res, next) => {
 
     if (status === 'rejected') updateData.rejected_reason = reason;
 
+    const prevLead = await db('leads').where({ id: req.params.id }).first();
     const [lead] = await db('leads')
       .where({ id: req.params.id, organization_id: req.organizationId })
       .update(updateData)
       .returning('*');
+
+    // Automation trigger
+    if (lead && prevLead && prevLead.status !== lead.status) {
+      runAutomations(req.organizationId, 'lead_status_changed', {
+        entity_type: 'lead', entity_id: lead.id,
+        lead_id: lead.id, contact_id: lead.contact_id,
+        status: lead.status, prev_status: prevLead.status,
+      }).catch(() => {});
+    }
 
     res.json({ success: true, data: lead });
   } catch (error) {

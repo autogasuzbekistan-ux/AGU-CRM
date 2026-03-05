@@ -1,4 +1,5 @@
 const db = require('../../database/connection');
+const { runAutomations } = require('../automation/automation.engine');
 
 exports.list = async (req, res, next) => {
   try {
@@ -113,6 +114,12 @@ exports.create = async (req, res, next) => {
       .onConflict(['user_id', 'period_type', 'period_date'])
       .merge({ deals_created: db.raw('operator_stats.deals_created + 1') });
 
+    // Automation trigger
+    runAutomations(req.organizationId, 'deal_created', {
+      entity_type: 'deal', entity_id: deal.id,
+      deal_id: deal.id, contact_id: deal.contact_id, assigned_to: deal.assigned_to,
+    }).catch(() => {});
+
     res.status(201).json({ success: true, data: deal });
   } catch (error) {
     next(error);
@@ -163,6 +170,12 @@ exports.moveStage = async (req, res, next) => {
       io.to(`org:${req.organizationId}`).emit('deal_moved', { dealId: deal.id, stageId });
     }
 
+    // Automation trigger
+    runAutomations(req.organizationId, 'deal_stage_changed', {
+      entity_type: 'deal', entity_id: deal.id,
+      deal_id: deal.id, contact_id: deal.contact_id, stage_id: stageId,
+    }).catch(() => {});
+
     res.json({ success: true, data: deal });
   } catch (error) {
     next(error);
@@ -202,6 +215,13 @@ exports.markWon = async (req, res, next) => {
         .increment('total_deals', 1);
     }
 
+    // Automation trigger
+    runAutomations(req.organizationId, 'deal_won', {
+      entity_type: 'deal', entity_id: deal.id,
+      deal_id: deal.id, contact_id: deal.contact_id,
+      amount: deal.amount, assigned_to: deal.assigned_to,
+    }).catch(() => {});
+
     res.json({ success: true, data: deal });
   } catch (error) {
     next(error);
@@ -228,6 +248,13 @@ exports.markLost = async (req, res, next) => {
       })
       .onConflict(['user_id', 'period_type', 'period_date'])
       .merge({ deals_lost: db.raw('operator_stats.deals_lost + 1') });
+
+    // Automation trigger
+    runAutomations(req.organizationId, 'deal_lost', {
+      entity_type: 'deal', entity_id: deal.id,
+      deal_id: deal.id, contact_id: deal.contact_id,
+      reason: reason || '', assigned_to: deal.assigned_to,
+    }).catch(() => {});
 
     res.json({ success: true, data: deal });
   } catch (error) {

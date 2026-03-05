@@ -4,6 +4,7 @@ import {
   LayoutDashboard, Users, UserPlus, BarChart3, MessageSquare,
   CheckSquare, Package, Settings, LogOut, Bell, Menu, X,
   TrendingUp, Trophy, Zap, ChevronDown, Building2,
+  Radio, FileText,
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useNotifications } from '../hooks/useNotifications';
@@ -22,7 +23,11 @@ const navItems = [
   { to: '/analytics', label: 'Tahlil', icon: BarChart3 },
   { to: '/leaderboard', label: 'Reyting', icon: Trophy },
   { divider: true },
-  { to: '/settings/integrations', label: 'Integratsiyalar', icon: Zap },
+  { to: '/broadcasts', label: 'Ommaviy Xabar', icon: Radio },
+  { to: '/invoices', label: 'Fakturalar', icon: FileText },
+  { to: '/automations', label: 'Avtomatizatsiya', icon: Zap, adminOnly: true },
+  { divider: true },
+  { to: '/settings/integrations', label: 'Integratsiyalar', icon: Settings },
   { to: '/settings/users', label: 'Foydalanuvchilar', icon: Users, adminOnly: true },
   { to: '/settings', label: 'Sozlamalar', icon: Settings },
 ];

@@ -23,6 +23,9 @@ import LeaderboardPage from './pages/analytics/LeaderboardPage';
 import IntegrationsPage from './pages/settings/IntegrationsPage';
 import UsersPage from './pages/settings/UsersPage';
 import SettingsPage from './pages/settings/SettingsPage';
+import AutomationPage from './pages/automation/AutomationPage';
+import BroadcastPage from './pages/broadcasts/BroadcastPage';
+import InvoicesPage from './pages/invoices/InvoicesPage';
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuthStore();
@@ -56,6 +59,9 @@ export default function App() {
           <Route path="warehouse" element={<WarehousePage />} />
           <Route path="analytics" element={<AnalyticsPage />} />
           <Route path="leaderboard" element={<LeaderboardPage />} />
+          <Route path="automations" element={<AutomationPage />} />
+          <Route path="broadcasts" element={<BroadcastPage />} />
+          <Route path="invoices" element={<InvoicesPage />} />
           <Route path="settings/integrations" element={<IntegrationsPage />} />
           <Route path="settings/users" element={<UsersPage />} />
           <Route path="settings" element={<SettingsPage />} />
