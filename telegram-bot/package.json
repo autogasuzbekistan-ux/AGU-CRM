@@ -1,0 +1,19 @@
+{
+  "name": "@agu-crm/telegram-bot",
+  "version": "1.0.0",
+  "description": "AGU CRM - Telegram Bot (Operatorlar uchun)",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.7",
+    "dotenv": "^16.4.1",
+    "node-telegram-bot-api": "^0.66.0",
+    "ioredis": "^5.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
